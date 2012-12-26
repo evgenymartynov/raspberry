@@ -3,7 +3,7 @@ import flask
 app = flask.Flask(__name__)
 app.config.from_object('config.DebugConfig')
 
-from probe import *
+from probing.probe import *
 from config import Hosts
 
 def probe_hosts(hosts):
