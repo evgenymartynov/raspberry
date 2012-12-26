@@ -3,19 +3,18 @@ import flask
 app = flask.Flask(__name__)
 app.config.from_object('config.DebugConfig')
 
-from probing.probe import *
+from probing.probe_service import ProbeService
 from config import Hosts
+
+probe_service = None
 
 def probe_hosts(hosts):
   stats = []
 
-  for node, stat in hosts:
-    okay, status, description = probe_host(
-        node,
-        stat == Hosts.STATUS_DOWN,
-        stat == Hosts.STATUS_REDIRECT)
+  for host in hosts:
+    okay, status, description = probe_service.query(host)
     stats.append({
-      'host': node
+      'host': host
     , 'as_expected': okay
     , 'status': status
     , 'description': description
@@ -25,15 +24,26 @@ def probe_hosts(hosts):
 
 @app.route('/nodes')
 def nodes_status_as_json():
-  return flask.jsonify(stats=probe_hosts(Hosts.nodes))
+  hosts = map(lambda x: x[0], Hosts.nodes)
+  return flask.jsonify(stats=probe_hosts(hosts))
 
 @app.route('/services')
 def services_status_as_json():
-  return flask.jsonify(stats=probe_hosts(Hosts.services))
+  hosts = map(lambda x: x[0], Hosts.services)
+  return flask.jsonify(stats=probe_hosts(hosts))
 
 @app.route('/')
 def main_page():
   return flask.render_template('main.html')
 
 if __name__ == '__main__':
+  probe_service = ProbeService(map(
+      lambda tup:
+          ( tup[0]
+          , tup[1] == Hosts.STATUS_DOWN
+          , tup[1] == Hosts.STATUS_REDIRECT
+          ),
+      Hosts.nodes + Hosts.services))
+  probe_service.start()
+
   app.run(host='0.0.0.0')
