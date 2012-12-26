@@ -98,7 +98,7 @@ function buildTable(table, data) {
   }
 }
 
-$(document).ready(function() {
+function updateStatus() {
   var nodesTable = $('#nodes_table');
   var servicesTable = $('#services_table');
 
@@ -115,6 +115,12 @@ $(document).ready(function() {
       buildTable(servicesTable, data);
     }
   });
+
+  setTimeout(updateStatus, 30000);
+}
+
+$(document).ready(function() {
+  updateStatus();
 });
 </script>
 
