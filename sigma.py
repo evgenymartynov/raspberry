@@ -6,6 +6,9 @@ app.config.from_object('sigma.config.Config')
 from probing.probe_service import ProbeService
 from config import Hosts
 
+import platform
+hostname = platform.node()
+
 probe_service = None
 
 def probe_hosts(hosts):
@@ -34,7 +37,7 @@ def services_status_as_json():
 
 @app.route('/')
 def main_page():
-  return flask.render_template('main.html')
+  return flask.render_template('main.html', hostname=hostname)
 
 #
 # Call this before running the app!

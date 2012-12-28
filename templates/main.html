@@ -5,6 +5,10 @@
 </head>
 <body>
 
+<div class="hostname-block">
+<p>Served by {{ hostname }}</p>
+</div>
+
 <div style="display: table; height: 100%; width: 38em; margin: auto">
   <div id="content" style="display: table-cell; vertical-align: middle">
     <h2>Nodes</h2>
@@ -41,6 +45,16 @@ table {
 
 table td {
   padding: 4px 8px;
+}
+
+.hostname-block {
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  font-size: smaller;
+  color: #555;
+  padding: 1em;
 }
 
 .status {
