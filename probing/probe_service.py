@@ -21,7 +21,6 @@ class ProbeService(object):
       # Run through and update all hosts/services.
       for tup in self.hosts:
         host = tup[0]
-        print 'doing', host
 
         with self.results_lock:
           self.results[host] = probe.probe_host(*tup)

@@ -1,7 +1,7 @@
 import flask
 
 app = flask.Flask(__name__)
-app.config.from_object('config.DebugConfig')
+app.config.from_object('sigma.config.Config')
 
 from probing.probe_service import ProbeService
 from config import Hosts
@@ -36,7 +36,11 @@ def services_status_as_json():
 def main_page():
   return flask.render_template('main.html')
 
-if __name__ == '__main__':
+#
+# Call this before running the app!
+#
+def Init():
+  global probe_service
   probe_service = ProbeService(map(
       lambda tup:
           ( tup[0]
@@ -46,4 +50,6 @@ if __name__ == '__main__':
       Hosts.nodes + Hosts.services))
   probe_service.start()
 
+if __name__ == '__main__':
+  Init()
   app.run(host='0.0.0.0')
