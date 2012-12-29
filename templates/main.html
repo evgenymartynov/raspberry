@@ -117,14 +117,14 @@ function updateStatus() {
   var servicesTable = $('#services_table');
 
   $.ajax({
-    url: '/nodes',
+    url: 'nodes',
     success: function (data, status) {
       buildTable(nodesTable, data);
     }
   });
 
   $.ajax({
-    url: '/services',
+    url: 'services',
     success: function (data, status) {
       buildTable(servicesTable, data);
     }
