@@ -30,6 +30,8 @@ def http_status_is_down(status):
     return True
   if 500 <= status < 600:
     return True
+  if 400 <= status < 500:
+    return True
   if status in [200] or http_status_is_redirect(status):
     return False
   raise NotImplementedError('Not sure what to do with status=%d' % status)
