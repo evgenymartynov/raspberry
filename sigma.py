@@ -1,7 +1,11 @@
 import flask
 
 app = flask.Flask(__name__)
-app.config.from_object('sigma.config.Config')
+CONF='config.Config'
+try:
+  app.config.from_object('sigma.' + CONF)
+except:
+  app.config.from_object(CONF)
 
 from probing.probe_service import ProbeService
 from config import Hosts
