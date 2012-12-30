@@ -9,7 +9,7 @@ class Thread(threading.Thread):
   def join(self, timeout=None):
     if timeout is None:
       while self.isAlive():
-        super(ResilientThread, self).join(0)
+        super(Thread, self).join(0)
         time.sleep(0.1)
     else:
       super(Thread, self).join(timeout)
