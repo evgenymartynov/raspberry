@@ -1,0 +1,5 @@
+Sigma requires the following packages:
+
+* requests, for probing/
+* flask, for web front-end
+* flup, for deployment with FCGI
