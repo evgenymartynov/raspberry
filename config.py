@@ -11,9 +11,9 @@ class Hosts(object):
   STATUS_DOWN     = 3
 
   nodes = [
-    ('archimedes.epochfail.com',  STATUS_UP)
+    ('archimedes.epochfail.com',  STATUS_DOWN)
   , ('cherrybrook.epochfail.com', STATUS_REDIRECT)
-  , ('kensington.epochfail.com',  STATUS_UP)
+  , ('kensington.epochfail.com',  STATUS_DOWN)
   ]
 
   services = [
