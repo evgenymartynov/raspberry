@@ -1,5 +1,5 @@
 import probe
-import threading, time
+import lib.theta as theta, threading, time
 
 class ProbeService(object):
   def __init__(self, hosts):
@@ -11,7 +11,7 @@ class ProbeService(object):
 
     # Results-related data and locks.
     self.results_lock = threading.Lock()
-    self.probe_thread = threading.Thread(
+    self.probe_thread = theta.ResilientThread(
         target=self.__probe_worker,
         name='probe_thread')
     self.probe_thread.daemon = True
