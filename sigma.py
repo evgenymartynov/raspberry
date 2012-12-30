@@ -32,7 +32,14 @@ def probe_hosts(hosts):
 @app.route('/nodes')
 def nodes_status_as_json():
   hosts = map(lambda x: x[0], Hosts.nodes)
-  return flask.jsonify(stats=probe_hosts(hosts))
+  stats = probe_hosts(hosts)
+
+  # We check health of nodes by looking at /node-status, so URL has to be
+  # cleaned up before displaying.
+  for stat in stats:
+    stat['host'] = stat['host'].split('/', 1)[0]
+
+  return flask.jsonify(stats=stats)
 
 @app.route('/services')
 def services_status_as_json():
