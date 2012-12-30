@@ -1,5 +1,10 @@
 import probe
-import lib.theta as theta, threading, time
+import threading, time
+
+try:
+  import sigma.lib.theta as theta
+except:
+  import lib.theta as theta
 
 class ProbeService(object):
   def __init__(self, hosts):
