@@ -4,6 +4,7 @@ __all__ = ['probe_host']
 
 # Fetches the HTTP response code for a given hostname.
 # Returns -1 on connection timeout.
+# Returns 703 otherwise (DNS lookup error, others).
 def get_response_code(hostname, allow_redirects=False, timeout=2):
   try:
     r = requests.get(
@@ -13,6 +14,8 @@ def get_response_code(hostname, allow_redirects=False, timeout=2):
     return r.status_code
   except requests.exceptions.Timeout:
     return -1
+  except:
+    return 703
 
 # Checks whether a connection attempt timed out as per above.
 def http_status_is_timeout(status):
@@ -26,7 +29,7 @@ def http_status_is_redirect(status):
 def http_status_is_down(status):
   status = int(status)
 
-  if http_status_is_timeout(status):
+  if http_status_is_timeout(status) or http_status_is_fubar(status):
     return True
   if 500 <= status < 600:
     return True
@@ -35,6 +38,9 @@ def http_status_is_down(status):
   if status in [200] or http_status_is_redirect(status):
     return False
   raise NotImplementedError('Not sure what to do with status=%d' % status)
+
+def http_status_is_fubar(status):
+  return status == 703
 
 # Tries to fetch default HTTP page for a given host and compares it to an
 # expected outcome.
@@ -51,7 +57,9 @@ def probe_host(hostname, should_be_down, should_redirect):
   details = []
 
   # Fill out short_desc.
-  if http_status_is_down(status):
+  if http_status_is_fubar(status):
+    short_desc = 'fubar'
+  elif http_status_is_down(status):
     short_desc = 'down'
   elif http_status_is_redirect(status):
     short_desc = 'redirect'
@@ -60,15 +68,16 @@ def probe_host(hostname, should_be_down, should_redirect):
     short_desc = 'up'
 
   # Describe the status and expectations.
-  if should_be_down:
+  if http_status_is_fubar(status):
+    details.append('it\'s fucked, jim')
+  elif should_be_down:
     if http_status_is_down(status):
       expectation_matched = True
       if http_status_is_timeout(status):
         details.append('connection timed out')
     else:
       details.append('host expected down, got status %d' % status)
-
-  if should_redirect:
+  elif should_redirect:
     if http_status_is_redirect(status):
       expectation_matched = True
       details.append('being redirected somewhere else')
@@ -76,8 +85,7 @@ def probe_host(hostname, should_be_down, should_redirect):
       details.append('normal response expected, but request timed out')
     else:
       details.append('redirect expected, got status %d' % status)
-
-  if not should_be_down and not should_redirect:
+  elif not should_be_down and not should_redirect:
     # The response must be successful.
     if status == 200:
       expectation_matched = True
